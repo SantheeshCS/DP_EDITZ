@@ -228,4 +228,67 @@ router.get('/orders', authMiddleware, async (req, res) => {
   }
 });
 
+// Helper function to programmatically update the password hash in the backend .env file
+const fs = require('fs');
+const path = require('path');
+
+const updateEnvPasswordHash = (newHash) => {
+  try {
+    const envPath = path.join(__dirname, '../.env');
+    if (!fs.existsSync(envPath)) {
+      console.warn('.env file not found, skipping file update.');
+      return false;
+    }
+    let envContent = fs.readFileSync(envPath, 'utf8');
+    // Replace the ADMIN_PASSWORD_HASH key
+    envContent = envContent.replace(/ADMIN_PASSWORD_HASH=.*/, `ADMIN_PASSWORD_HASH=${newHash}`);
+    fs.writeFileSync(envPath, envContent, 'utf8');
+    return true;
+  } catch (err) {
+    console.error('Failed to write new password hash to .env file:', err.message);
+    return false;
+  }
+};
+
+// POST /api/admin/change-password — Update admin password (JWT Protected)
+router.post('/change-password', authMiddleware, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Please provide both current and new passwords.' });
+    }
+
+    const envHash = process.env.ADMIN_PASSWORD_HASH;
+    if (!envHash) {
+      return res.status(500).json({ error: 'Password hash configuration is missing.' });
+    }
+
+    // 1. Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, envHash);
+    if (!isMatch) {
+      return res.status(450).json({ error: 'Incorrect current password.' }); // Custom status code or 400
+    }
+
+    // 2. Generate new bcrypt hash
+    const salt = await bcrypt.genSalt(10);
+    const newHash = await bcrypt.hash(newPassword, salt);
+
+    // 3. Persist new hash to .env file
+    const persisted = updateEnvPasswordHash(newHash);
+    if (!persisted) {
+      return res.status(500).json({ error: 'Failed to save new password to backend configuration.' });
+    }
+
+    // 4. Update in-memory environment variable
+    process.env.ADMIN_PASSWORD_HASH = newHash;
+
+    res.json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    console.error('Change Password Error:', error.message);
+    res.status(500).json({ error: 'Server error while updating password.' });
+  }
+});
+
 module.exports = router;
+
