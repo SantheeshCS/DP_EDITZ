@@ -2,8 +2,8 @@ fetch('http://localhost:5000/api/admin/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    email: 'admin@example.com',
-    password: 'admin123'
+    email: 'sreesantheesh@gmail.com',
+    password: 'dpadmin123'
   })
 })
 .then(async (res) => {

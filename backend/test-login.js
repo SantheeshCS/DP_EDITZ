@@ -1,8 +1,8 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 
-const email = 'admin@example.com';
-const password = 'admin123';
+const email = 'sreesantheesh@gmail.com';
+const password = 'dpadmin123';
 
 const envEmail = process.env.ADMIN_EMAIL;
 const envHash = process.env.ADMIN_PASSWORD_HASH;
