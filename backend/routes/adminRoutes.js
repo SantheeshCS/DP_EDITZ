@@ -23,20 +23,20 @@ const upload = multer({
 // Admin login route
 router.post('/login', async (req, res) => {
   try {
-    const { adminId, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!adminId || !password) {
-      return res.status(400).json({ error: 'Please provide both Admin ID and password.' });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Please provide both email and password.' });
     }
 
-    const envAdminId = process.env.ADMIN_ID;
+    const envEmail = process.env.ADMIN_EMAIL;
     const envHash = process.env.ADMIN_PASSWORD_HASH;
 
-    if (!envAdminId || !envHash) {
+    if (!envEmail || !envHash) {
       return res.status(500).json({ error: 'Admin credentials not configured on server.' });
     }
 
-    if (adminId !== envAdminId) {
+    if (email.toLowerCase() !== envEmail.toLowerCase()) {
       return res.status(401).json({ error: 'Invalid admin credentials.' });
     }
 
@@ -47,7 +47,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Sign JWT (valid for 24h)
-    const token = jwt.sign({ adminId }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
     res.json({ token, message: 'Login successful' });
   } catch (error) {
@@ -69,19 +69,21 @@ router.post(
     let uploadedTemplatePath = null;
 
     try {
-      const { title, description, category, tags } = req.body;
+      const { title, description, category, tags, templateUrl } = req.body;
 
       if (!title || !category) {
         return res.status(400).json({ error: 'Title and category are required fields.' });
       }
 
-      if (!req.files || !req.files['previewMedia'] || !req.files['templateFile']) {
-        return res.status(400).json({ error: 'Both preview media and template file are required.' });
+      if (!req.files || !req.files['previewMedia']) {
+        return res.status(400).json({ error: 'Preview media is required.' });
+      }
+
+      if (!req.files['templateFile'] && !templateUrl) {
+        return res.status(400).json({ error: 'Either a template file or a template app link must be provided.' });
       }
 
       const previewMediaFile = req.files['previewMedia'][0];
-      const templateFile = req.files['templateFile'][0];
-
       const previewMediaType = previewMediaFile.mimetype.startsWith('video/') ? 'video' : 'image';
 
       // Format filenames with timestamp to prevent collisions
@@ -89,24 +91,17 @@ router.post(
       const cleanTitle = title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30);
       
       const previewFileName = `previews-${timestamp}-${cleanTitle}-${previewMediaFile.originalname}`;
-      const templateFileName = `templates-${timestamp}-${cleanTitle}-${templateFile.originalname}`;
-
-      // 1. Upload preview media to public 'previews' bucket
-      uploadedPreviewPath = await uploadToSupabase(
-        'previews',
-        previewMediaFile.buffer,
-        previewFileName,
-        previewMediaFile.mimetype
-      );
-      const previewImageUrl = getPublicPreviewUrl(uploadedPreviewPath);
-
-      // 2. Upload actual template file to private 'templates' bucket
-      uploadedTemplatePath = await uploadToSupabase(
-        'templates',
-        templateFile.buffer,
-        templateFileName,
-        templateFile.mimetype
-      );
+      // 2. Upload actual template file to private 'templates' bucket (if provided)
+      if (req.files['templateFile']) {
+        const templateFile = req.files['templateFile'][0];
+        const templateFileName = `templates-${timestamp}-${cleanTitle}-${templateFile.originalname}`;
+        uploadedTemplatePath = await uploadToSupabase(
+          'templates',
+          templateFile.buffer,
+          templateFileName,
+          templateFile.mimetype
+        );
+      }
 
       // 3. Process tags
       let parsedTags = [];
@@ -126,6 +121,7 @@ router.post(
         previewImageUrl,
         previewMediaType,
         fileStoragePath: uploadedTemplatePath,
+        templateUrl: templateUrl || null,
         tags: parsedTags,
       });
 
@@ -150,7 +146,7 @@ router.post(
 // Edit template metadata (JWT Protected)
 router.put('/templates/:id', authMiddleware, async (req, res) => {
   try {
-    const { title, description, category, tags } = req.body;
+    const { title, description, category, tags, templateUrl } = req.body;
     const { id } = req.params;
 
     const template = await Template.findById(id);
@@ -161,6 +157,7 @@ router.put('/templates/:id', authMiddleware, async (req, res) => {
     if (title) template.title = title;
     if (description !== undefined) template.description = description;
     if (category) template.category = category;
+    if (templateUrl !== undefined) template.templateUrl = templateUrl;
     
     if (tags !== undefined) {
       template.tags = tags

@@ -32,11 +32,11 @@ const TemplateDetail = () => {
 
     try {
       const response = await api.get(`/download/${id}`);
-      const { signedDownloadUrl } = response.data;
+      const { downloadUrl } = response.data;
       
-      toast.success('Download starting...', { id: toastId });
-      // Trigger the file download by navigating to the signed URL
-      window.open(signedDownloadUrl, '_blank');
+      toast.success('Opening template...', { id: toastId });
+      // Trigger the app link or file download
+      window.location.href = downloadUrl;
     } catch (error) {
       console.error(error);
       const msg = error.response?.data?.error || 'Failed to generate download link.';
@@ -170,7 +170,7 @@ const TemplateDetail = () => {
               <div className="space-y-2 text-left">
                 <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Description</span>
                 <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">
-                  {template.description || 'Elevate your productions with professional curated digital files from Aesthetix. Fully customizable templates, clean layer structuring, premium elements, and immediate free download.'}
+                  {template.description || 'Elevate your productions with professional curated digital files from DP_TEMPLATES. Fully customizable templates, clean layer structuring, premium elements, and immediate free download.'}
                 </p>
               </div>
 
@@ -184,12 +184,12 @@ const TemplateDetail = () => {
                   {downloadLoading ? (
                     <>
                       <Loader className="w-5 h-5 animate-spin" />
-                      <span>Generating Secure Link...</span>
+                      <span>Preparing Link...</span>
                     </>
                   ) : (
                     <>
                       <Download className="w-4 h-4" />
-                      <span>Download Free File</span>
+                      <span>{template.templateUrl ? "Open in App (CapCut/Alight)" : "Download Free File"}</span>
                     </>
                   )}
                 </button>

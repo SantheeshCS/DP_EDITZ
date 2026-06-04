@@ -48,7 +48,7 @@ const getPublicPreviewUrl = (path) => {
 const generateSignedUrl = async (fileStoragePath, expirySeconds = 900) => {
   const { data, error } = await supabase.storage
     .from('templates')
-    .createSignedUrl(fileStoragePath, expirySeconds);
+    .createSignedUrl(fileStoragePath, expirySeconds, { download: true });
 
   if (error) {
     throw new Error(`Supabase Signed URL Error: ${error.message}`);

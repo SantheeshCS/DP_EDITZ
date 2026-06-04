@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { Lock, Mail, Loader } from 'lucide-react';
 
 const Login = () => {
-  const [adminId, setAdminId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -20,17 +20,17 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!adminId || !password) {
-      return toast.error('Please enter both Admin ID and password.');
+    if (!email || !password) {
+      return toast.error('Please enter both email and password.');
     }
 
     setLoading(true);
     try {
-      const response = await api.post('/admin/login', { adminId, password });
+      const response = await api.post('/admin/login', { email, password });
       const { token } = response.data;
       
       localStorage.setItem('adminToken', token);
-      localStorage.setItem('adminId', adminId);
+      localStorage.setItem('adminEmail', email);
       
       toast.success('Successfully authenticated');
       navigate('/dashboard');
@@ -50,7 +50,7 @@ const Login = () => {
         {/* Brand/Header */}
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-            AESTHETIX
+            DP_TEMPLATES
           </h2>
           <p className="text-sm text-slate-500">
             Sign in to your administration dashboard
@@ -61,16 +61,16 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-              Admin ID
+              Admin Email
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+              <Mail className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
               <input
-                type="text"
+                type="email"
                 required
-                value={adminId}
-                onChange={(e) => setAdminId(e.target.value)}
-                placeholder="Admin ID"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@example.com"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
               />
             </div>

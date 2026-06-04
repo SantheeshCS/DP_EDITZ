@@ -17,7 +17,7 @@ const Navbar = () => {
         {/* Brand logo */}
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-2xl font-extrabold tracking-wider bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            AESTHETIX
+            DP_TEMPLATES
           </span>
           <span className="text-[10px] bg-indigo-50 border border-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest hidden sm:inline-block">
             Directory

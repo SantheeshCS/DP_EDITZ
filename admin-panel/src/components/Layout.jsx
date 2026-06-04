@@ -80,11 +80,11 @@ const Layout = ({ children }) => {
       <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between">
         <div>
           {/* Brand Logo */}
-          <div className="h-16 flex items-center px-6 border-b border-slate-200">
+          <Link to="/dashboard" className="h-16 flex items-center px-6 border-b border-slate-200 hover:bg-slate-50 transition-colors">
             <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
-              AESTHETIX <span className="text-sm font-medium text-slate-400">ADMIN</span>
+              DP_TEMPLATES <span className="text-sm font-medium text-slate-400">ADMIN</span>
             </span>
-          </div>
+          </Link>
 
           {/* Navigation Links */}
           <nav className="mt-6 px-4 space-y-1">

@@ -31,7 +31,11 @@ const templateSchema = new mongoose.Schema({
   },
   fileStoragePath: {
     type: String,
-    required: true, // Supabase private templates bucket path (never exposed directly)
+    required: false,
+  },
+  templateUrl: {
+    type: String,
+    required: false,
   },
   tags: {
     type: [String],

@@ -9,7 +9,7 @@ const Footer = () => {
         {/* Brand identity */}
         <div className="text-center md:text-left space-y-2">
           <Link to="/" className="text-xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent tracking-wide">
-            AESTHETIX
+            DP_TEMPLATES
           </Link>
           <p className="text-xs text-slate-500 max-w-sm">
             Curated premium editing templates, poster designs, and elite creative assets. Free to download. No account required.
@@ -24,7 +24,7 @@ const Footer = () => {
             <span>for creative visual artists</span>
           </div>
           <p className="text-[10px] text-slate-400">
-            © {new Date().getFullYear()} Aesthetix. All rights reserved.
+            © {new Date().getFullYear()} DP_TEMPLATES. All rights reserved.
           </p>
         </div>
       </div>

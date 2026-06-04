@@ -18,15 +18,19 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Template not found.' });
     }
 
-    if (!template.fileStoragePath) {
-      return res.status(404).json({ error: 'Template file is missing.' });
-    }
+    let downloadLink = null;
 
-    // Generate a 15-minute signed URL
-    const signedDownloadUrl = await generateSignedUrl(template.fileStoragePath, 900);
+    if (template.templateUrl) {
+      downloadLink = template.templateUrl;
+    } else if (template.fileStoragePath) {
+      // Generate a 15-minute signed URL
+      downloadLink = await generateSignedUrl(template.fileStoragePath, 900);
+    } else {
+      return res.status(404).json({ error: 'Template file or link is missing.' });
+    }
     
-    if (!signedDownloadUrl) {
-      throw new Error('Failed to generate signed download URL');
+    if (!downloadLink) {
+      throw new Error('Failed to generate download URL');
     }
 
     // Increment download count
@@ -35,7 +39,7 @@ router.get('/:id', async (req, res) => {
 
     res.json({
       status: 'success',
-      signedDownloadUrl,
+      downloadUrl: downloadLink,
       templateTitle: template.title,
     });
   } catch (error) {
