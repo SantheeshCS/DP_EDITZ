@@ -92,8 +92,9 @@ SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_secret
 STRIPE_SECRET_KEY=sk_test_your_secret
 STRIPE_WEBHOOK_SECRET=whsec_your_local_or_production_secret
+ADMIN_ID=admin
 ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD_HASH=$2a$10$vNIPY1hH/z1tO/XbJc.W8uL5VfE8F/0oV2Lp1c.mS/7rI5D2K6Cki  # bcrypt hash for "admin123"
+ADMIN_PASSWORD_HASH=$2a$10$vNIPY1hH/z1tO/XbJc.W8uL5VfE8F/0oV2Lp1c.mS/7rI5D2K6Cki  # bcrypt hash
 CLIENT_URL=http://localhost:5173
 ADMIN_URL=http://localhost:5174
 ```
@@ -116,7 +117,7 @@ cd admin-panel
 npm install
 npm run dev
 ```
-Open [http://localhost:5174](http://localhost:5174) (or check Vite's port) in your browser. Log in using `admin@example.com` and `admin123`.
+Open [http://localhost:5174](http://localhost:5174) (or check Vite's port) in your browser. Log in using your configured `ADMIN_ID` and password.
 
 ### Step 4: Run Public Storefront
 Create a `.env` file inside `/public-store`:
