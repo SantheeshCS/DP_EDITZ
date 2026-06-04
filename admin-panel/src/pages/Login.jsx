@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { Lock, Mail, Loader } from 'lucide-react';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [adminId, setAdminId] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -20,17 +20,17 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      return toast.error('Please enter both email and password.');
+    if (!adminId || !password) {
+      return toast.error('Please enter both Admin ID and password.');
     }
 
     setLoading(true);
     try {
-      const response = await api.post('/admin/login', { email, password });
+      const response = await api.post('/admin/login', { adminId, password });
       const { token } = response.data;
       
       localStorage.setItem('adminToken', token);
-      localStorage.setItem('adminEmail', email);
+      localStorage.setItem('adminId', adminId);
       
       toast.success('Successfully authenticated');
       navigate('/dashboard');
@@ -44,15 +44,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center px-4 font-sans text-slate-100">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden p-8 space-y-6">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center px-4 font-sans text-slate-900">
+      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden p-8 space-y-6">
         
         {/* Brand/Header */}
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
             AESTHETIX
           </h2>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-500">
             Sign in to your administration dashboard
           </p>
         </div>
@@ -60,35 +60,35 @@ const Login = () => {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-              Admin Email
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+              Admin ID
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+              <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
               <input
-                type="email"
+                type="text"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                value={adminId}
+                onChange={(e) => setAdminId(e.target.value)}
+                placeholder="Admin ID"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+              <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
               />
             </div>
           </div>
@@ -96,7 +96,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 text-sm font-semibold transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/20"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 text-sm font-semibold transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md cursor-pointer"
           >
             {loading ? (
               <>
@@ -110,7 +110,7 @@ const Login = () => {
         </form>
       </div>
 
-      <p className="mt-8 text-xs text-slate-600 text-center">
+      <p className="mt-8 text-xs text-slate-500 text-center">
         Secured Admin Panel. Authorized operations only.
       </p>
     </div>

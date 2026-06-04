@@ -6,8 +6,7 @@ const path = require('path');
 
 const adminRoutes = require('./routes/adminRoutes');
 const templateRoutes = require('./routes/templateRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const webhookRoutes = require('./routes/webhookRoutes');
+const downloadRoutes = require('./routes/downloadRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -45,12 +44,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // ==========================================
-// Route registration with special parser ordering
+// Route registration
 // ==========================================
-
-// CRITICAL: Stripe webhook route must be defined BEFORE express.json()
-// to preserve the raw request body buffer needed for signature verification.
-app.use('/api/webhook', webhookRoutes);
 
 // Generic body parsers for JSON and URL-encoded requests (applied to other routes)
 app.use(express.json());
@@ -62,7 +57,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Standard API Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/templates', templateRoutes);
-app.use('/api', orderRoutes); // Mounts /checkout/:id and /download/:orderId
+app.use('/api/download', downloadRoutes);
 
 // ==========================================
 // Base Check & Error Handling

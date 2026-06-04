@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const Template = require('../models/Template');
-const Order = require('../models/Order');
 const authMiddleware = require('../middleware/authMiddleware');
 const {
   uploadToSupabase,
@@ -17,27 +16,27 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: {
-    fileSize: 100 * 1024 * 1024, // 100MB file limit
+    fileSize: 500 * 1024 * 1024, // 500MB file limit to accommodate video previews and larger templates
   },
 });
 
 // Admin login route
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { adminId, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Please provide both email and password.' });
+    if (!adminId || !password) {
+      return res.status(400).json({ error: 'Please provide both Admin ID and password.' });
     }
 
-    const envEmail = process.env.ADMIN_EMAIL;
+    const envAdminId = process.env.ADMIN_ID;
     const envHash = process.env.ADMIN_PASSWORD_HASH;
 
-    if (!envEmail || !envHash) {
+    if (!envAdminId || !envHash) {
       return res.status(500).json({ error: 'Admin credentials not configured on server.' });
     }
 
-    if (email.toLowerCase() !== envEmail.toLowerCase()) {
+    if (adminId !== envAdminId) {
       return res.status(401).json({ error: 'Invalid admin credentials.' });
     }
 
@@ -48,7 +47,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Sign JWT (valid for 24h)
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign({ adminId }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
     res.json({ token, message: 'Login successful' });
   } catch (error) {
@@ -62,7 +61,7 @@ router.post(
   '/templates',
   authMiddleware,
   upload.fields([
-    { name: 'previewImage', maxCount: 1 },
+    { name: 'previewMedia', maxCount: 1 },
     { name: 'templateFile', maxCount: 1 },
   ]),
   async (req, res) => {
@@ -70,32 +69,34 @@ router.post(
     let uploadedTemplatePath = null;
 
     try {
-      const { title, description, category, price, tags } = req.body;
+      const { title, description, category, tags } = req.body;
 
-      if (!title || !category || !price) {
-        return res.status(400).json({ error: 'Title, category, and price are required fields.' });
+      if (!title || !category) {
+        return res.status(400).json({ error: 'Title and category are required fields.' });
       }
 
-      if (!req.files || !req.files['previewImage'] || !req.files['templateFile']) {
-        return res.status(400).json({ error: 'Both preview image and template file are required.' });
+      if (!req.files || !req.files['previewMedia'] || !req.files['templateFile']) {
+        return res.status(400).json({ error: 'Both preview media and template file are required.' });
       }
 
-      const previewImageFile = req.files['previewImage'][0];
+      const previewMediaFile = req.files['previewMedia'][0];
       const templateFile = req.files['templateFile'][0];
+
+      const previewMediaType = previewMediaFile.mimetype.startsWith('video/') ? 'video' : 'image';
 
       // Format filenames with timestamp to prevent collisions
       const timestamp = Date.now();
       const cleanTitle = title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30);
       
-      const previewFileName = `previews-${timestamp}-${cleanTitle}-${previewImageFile.originalname}`;
+      const previewFileName = `previews-${timestamp}-${cleanTitle}-${previewMediaFile.originalname}`;
       const templateFileName = `templates-${timestamp}-${cleanTitle}-${templateFile.originalname}`;
 
-      // 1. Upload preview image to public 'previews' bucket
+      // 1. Upload preview media to public 'previews' bucket
       uploadedPreviewPath = await uploadToSupabase(
         'previews',
-        previewImageFile.buffer,
+        previewMediaFile.buffer,
         previewFileName,
-        previewImageFile.mimetype
+        previewMediaFile.mimetype
       );
       const previewImageUrl = getPublicPreviewUrl(uploadedPreviewPath);
 
@@ -116,17 +117,14 @@ router.post(
           .filter((tag) => tag.length > 0);
       }
 
-      // Convert price from decimal Rs (e.g. 99.50) to integer Paise (e.g. 9950)
-      const priceInPaise = Math.round(parseFloat(price) * 100);
-
       // 4. Save to MongoDB
       const newTemplate = new Template({
         title,
         description,
         category,
-        price: priceInPaise,
         previewImagePath: uploadedPreviewPath,
         previewImageUrl,
+        previewMediaType,
         fileStoragePath: uploadedTemplatePath,
         tags: parsedTags,
       });
@@ -152,7 +150,7 @@ router.post(
 // Edit template metadata (JWT Protected)
 router.put('/templates/:id', authMiddleware, async (req, res) => {
   try {
-    const { title, description, category, price, tags } = req.body;
+    const { title, description, category, tags } = req.body;
     const { id } = req.params;
 
     const template = await Template.findById(id);
@@ -164,11 +162,6 @@ router.put('/templates/:id', authMiddleware, async (req, res) => {
     if (description !== undefined) template.description = description;
     if (category) template.category = category;
     
-    if (price !== undefined) {
-      // Convert Price in Rs to Paise
-      template.price = Math.round(parseFloat(price) * 100);
-    }
-
     if (tags !== undefined) {
       template.tags = tags
         .split(',')
@@ -194,7 +187,7 @@ router.delete('/templates/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Template not found.' });
     }
 
-    // 1. Delete preview image from Supabase 'previews' bucket
+    // 1. Delete preview media from Supabase 'previews' bucket
     if (template.previewImagePath) {
       await deleteFileFromSupabase('previews', template.previewImagePath);
     }
@@ -211,20 +204,6 @@ router.delete('/templates/:id', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Template Deletion Error:', error.message);
     res.status(500).json({ error: 'Server error while deleting template.' });
-  }
-});
-
-// Get all orders with status + template name (JWT Protected)
-router.get('/orders', authMiddleware, async (req, res) => {
-  try {
-    const orders = await Order.find()
-      .populate('templateId', 'title price')
-      .sort({ createdAt: -1 });
-
-    res.json(orders);
-  } catch (error) {
-    console.error('Get Orders Error:', error.message);
-    res.status(500).json({ error: 'Server error fetching orders.' });
   }
 });
 
@@ -291,4 +270,3 @@ router.post('/change-password', authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
-

@@ -13,9 +13,9 @@ const TemplateEdit = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('editing');
-  const [price, setPrice] = useState('');
   const [tags, setTags] = useState('');
   const [previewImageUrl, setPreviewImageUrl] = useState('');
+  const [previewMediaType, setPreviewMediaType] = useState('image');
 
   useEffect(() => {
     const fetchTemplateDetails = async () => {
@@ -26,9 +26,9 @@ const TemplateEdit = () => {
         setTitle(template.title);
         setDescription(template.description || '');
         setCategory(template.category);
-        setPrice((template.price / 100).toString()); // paise to Rs
         setTags(template.tags?.join(', ') || '');
         setPreviewImageUrl(template.previewImageUrl);
+        setPreviewMediaType(template.previewMediaType || 'image');
       } catch (error) {
         console.error(error);
         toast.error('Failed to load template details for editing.');
@@ -44,8 +44,8 @@ const TemplateEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !category || !price) {
-      return toast.error('Please enter Title, Category, and Price.');
+    if (!title || !category) {
+      return toast.error('Please enter Title and Category.');
     }
 
     setSaving(true);
@@ -54,7 +54,6 @@ const TemplateEdit = () => {
         title,
         description,
         category,
-        price, // sent as decimal Rs, backend converts to paise
         tags,
       });
       toast.success('Template details updated successfully!');
@@ -82,23 +81,23 @@ const TemplateEdit = () => {
       <div className="flex items-center space-x-4">
         <Link
           to="/templates"
-          className="p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-slate-200 transition-colors"
+          className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h2 className="text-xl font-bold text-slate-100">Edit Template Metadata</h2>
-          <p className="text-xs text-slate-400">Modify information for the creative asset</p>
+          <h2 className="text-xl font-bold text-slate-800">Edit Template Metadata</h2>
+          <p className="text-xs text-slate-500">Modify information for the creative asset</p>
         </div>
       </div>
 
       {/* Edit Form */}
-      <form onSubmit={handleSubmit} className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-lg max-w-4xl space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm max-w-4xl space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column: Editable inputs */}
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                 Template Title *
               </label>
               <input
@@ -107,18 +106,18 @@ const TemplateEdit = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Vintage Cinematic Video LUTs"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                 Category *
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
               >
                 <option value="editing">Editing Template</option>
                 <option value="poster">Poster Design</option>
@@ -128,23 +127,7 @@ const TemplateEdit = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                Price (in ₹) *
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                required
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="e.g. 199.00"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                 Tags (comma-separated list)
               </label>
               <input
@@ -152,7 +135,7 @@ const TemplateEdit = () => {
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="luts, cinematic, adobe premiere, color grade"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
               />
             </div>
           </div>
@@ -160,7 +143,7 @@ const TemplateEdit = () => {
           {/* Right Column: Files & Description */}
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                 Description & Inclusion
               </label>
               <textarea
@@ -168,24 +151,33 @@ const TemplateEdit = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe what is included in this template and how to use it..."
                 rows="4"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                className="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors resize-none"
               />
             </div>
 
-            {/* Readonly Display of Active Image Preview */}
+            {/* Readonly Display of Active Image/Video Preview */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                Active Preview Image
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Active Preview Media
               </label>
-              <div className="flex items-center space-x-4 bg-slate-950 border border-slate-800 rounded-xl p-4">
-                <img
-                  src={previewImageUrl}
-                  alt={title}
-                  className="w-16 h-16 object-cover rounded-lg border border-slate-800"
-                />
+              <div className="flex items-center space-x-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                {previewMediaType === 'video' ? (
+                  <video
+                    src={previewImageUrl}
+                    className="w-16 h-16 object-cover rounded-lg border border-slate-300 bg-black"
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={previewImageUrl}
+                    alt={title}
+                    className="w-16 h-16 object-cover rounded-lg border border-slate-300"
+                  />
+                )}
                 <div className="text-left">
-                  <p className="text-xs font-medium text-slate-300">File is live in public store</p>
-                  <p className="text-[10px] text-slate-500">Image replacement requires deleting and re-uploading.</p>
+                  <p className="text-xs font-medium text-slate-700">File is live in public directory</p>
+                  <p className="text-[10px] text-slate-500">Media replacement requires deleting and re-uploading.</p>
                 </div>
               </div>
             </div>
@@ -193,17 +185,17 @@ const TemplateEdit = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="border-t border-slate-800 pt-6 flex items-center justify-end space-x-4">
+        <div className="border-t border-slate-200 pt-6 flex items-center justify-end space-x-4">
           <Link
             to="/templates"
-            className="px-5 py-3 border border-slate-800 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors text-sm font-semibold"
+            className="px-5 py-3 border border-slate-300 rounded-xl text-slate-600 hover:bg-slate-50 transition-colors text-sm font-semibold cursor-pointer"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={saving}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 px-6 text-sm font-semibold transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/10"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 px-6 text-sm font-semibold transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md cursor-pointer"
           >
             {saving ? (
               <>

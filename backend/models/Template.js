@@ -15,14 +15,15 @@ const templateSchema = new mongoose.Schema({
     required: true,
     enum: ['editing', 'poster', 'social-media', 'other'],
   },
-  price: {
-    type: Number,
-    required: true,
-    min: 0, // In smallest currency unit (e.g. Paise for INR, Cents for USD)
-  },
+
   previewImagePath: {
     type: String,
     required: true, // Supabase public previews bucket file path
+  },
+  previewMediaType: {
+    type: String,
+    enum: ['image', 'video'],
+    default: 'image',
   },
   previewImageUrl: {
     type: String,

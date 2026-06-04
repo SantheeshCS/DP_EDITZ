@@ -12,7 +12,6 @@ import Dashboard from './pages/Dashboard';
 import TemplatesList from './pages/TemplatesList';
 import TemplateNew from './pages/TemplateNew';
 import TemplateEdit from './pages/TemplateEdit';
-import OrdersList from './pages/OrdersList';
 
 function App() {
   return (
@@ -21,9 +20,9 @@ function App() {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#1e293b',
-            color: '#f8fafc',
-            border: '1px solid #334155',
+            background: '#ffffff',
+            color: '#1e293b',
+            border: '1px solid #e2e8f0',
           },
           success: {
             iconTheme: {
@@ -78,16 +77,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/orders"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <OrdersList />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
+
 
         {/* Base Fallbacks */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
