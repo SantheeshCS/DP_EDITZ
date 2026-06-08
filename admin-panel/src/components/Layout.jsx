@@ -91,8 +91,13 @@ const Layout = ({ children }) => {
         <div>
           {/* Brand Logo */}
           <Link to="/dashboard" className="h-16 flex items-center px-6 border-b border-slate-200 hover:bg-slate-50 transition-colors">
-            <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent tracking-tight">
-              DP_TEMPLATES <span className="text-sm font-medium text-slate-400">ADMIN</span>
+            <img 
+              src="/ADMI_LOGO.png" 
+              alt="Admin Logo" 
+              className="w-10 h-10 object-contain shadow-sm"
+            />
+            <span className="ml-3 text-lg font-bold text-slate-800 tracking-tight">
+              ADMIN
             </span>
           </Link>
 

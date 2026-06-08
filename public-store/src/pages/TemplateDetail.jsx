@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, ShieldCheck, Download, Sparkles, Loader } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Download, Loader, PlayCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const TemplateDetail = () => {
@@ -48,18 +48,18 @@ const TemplateDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-96">
-        <Loader className="w-10 h-10 text-indigo-500 animate-spin" />
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader className="w-8 h-8 text-slate-400 animate-spin" />
       </div>
     );
   }
 
   if (!template) {
     return (
-      <div className="max-w-4xl mx-auto px-6 py-20 text-center space-y-6">
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Template Not Found</h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm">The template file you are looking for does not exist or has been deleted by administration.</p>
-        <Link to="/browse" className="inline-block bg-indigo-600 text-white rounded-xl px-5 py-3 text-xs font-bold shadow-md hover:bg-indigo-700 transition-colors">
+      <div className="max-w-4xl mx-auto px-6 py-24 text-center space-y-6">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Asset Not Found</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-sm">The file you are looking for does not exist or has been removed.</p>
+        <Link to="/browse" className="inline-block bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-md px-5 py-3 text-sm font-semibold transition-colors">
           Browse Directory
         </Link>
       </div>
@@ -67,29 +67,26 @@ const TemplateDetail = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 px-6 py-12 transition-colors">
-      {/* Decorative Glow */}
-      <div className="absolute top-[20%] left-[-10%] w-[50%] h-[50%] bg-indigo-50 dark:bg-indigo-900/10 rounded-full pointer-events-none z-0 blur-3xl"></div>
-
-      <div className="max-w-6xl mx-auto space-y-8 relative z-10">
+    <div className="min-h-screen bg-white dark:bg-[#030712] transition-colors pb-24">
+      <div className="max-w-7xl mx-auto px-6 pt-12 space-y-8">
         
         {/* Back Link */}
         <div>
           <Link
             to="/browse"
-            className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+            className="inline-flex items-center space-x-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to Browse Directory</span>
+            <span>Directory</span>
           </Link>
         </div>
 
         {/* Product Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
-          {/* Left Column: Visual public image/video preview (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center">
+          {/* Left Column: Visual preview (7 cols) */}
+          <div className="lg:col-span-8 space-y-6">
+            <div className="bg-slate-50 dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex items-center justify-center">
               {template.previewMediaType === 'video' ? (
                 <video
                   src={template.previewImageUrl}
@@ -97,107 +94,106 @@ const TemplateDetail = () => {
                   autoPlay
                   loop
                   muted
-                  className="w-full h-full object-contain max-h-[500px] bg-black"
+                  className="w-full h-auto object-contain max-h-[600px] bg-slate-950"
                 />
               ) : (
                 <img
                   src={template.previewImageUrl}
                   alt={template.title}
-                  className="w-full h-full object-contain max-h-[500px]"
+                  className="w-full h-auto object-contain max-h-[600px]"
                 />
               )}
             </div>
             
-            {/* Template specs card */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm p-6 rounded-2xl space-y-4">
-              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">What's included in this download?</h3>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-500 dark:text-slate-400">
+            {/* Specs */}
+            <div className="border border-slate-200 dark:border-slate-800 p-6 rounded-lg space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Technical Details</h3>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-400">
                 <li className="flex items-center space-x-2">
-                  <Download className="w-4 h-4 text-indigo-500 shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
                   <span>Immediate High-Speed Download</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Full Usage License</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
+                  <span>Full Commercial Usage License</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <Sparkles className="w-4 h-4 text-purple-500 shrink-0" />
-                  <span>Curated High-Resolution Files</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
-                  <span>Verified Safe Content</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
+                  <span>Verified Safe Source Files</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* Right Column: details (5 cols) */}
-          <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl space-y-6 shadow-sm flex-1">
-              {/* Category Badge & title */}
-              <div className="space-y-2">
-                <span className="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full">
+          {/* Right Column: Details (5 cols) */}
+          <div className="lg:col-span-4 flex flex-col">
+            <div className="sticky top-24 border border-slate-200 dark:border-slate-800 p-8 rounded-lg space-y-8">
+              
+              {/* Header Info */}
+              <div className="space-y-4">
+                <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded font-mono text-[10px] uppercase tracking-wide">
                   {template.category}
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white leading-tight">
                   {template.title}
                 </h1>
               </div>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {template.tags?.map((tag, i) => (
                   <span
                     key={i}
-                    className="text-[10px] bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-3 py-0.5 rounded-full capitalize font-semibold"
+                    className="text-xs text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 px-2.5 py-1 rounded-md capitalize bg-slate-50 dark:bg-slate-900"
                   >
-                    {tag}
+                    #{tag}
                   </span>
                 ))}
               </div>
 
-              {/* Price Tag */}
-              <div className="flex items-baseline space-x-2 border-t border-b border-slate-100 dark:border-slate-800 py-4">
-                <span className="text-[10px] text-slate-400 uppercase tracking-widest self-center">Access:</span>
-                <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
-                  FREE
+              {/* Price */}
+              <div className="flex items-baseline space-x-2 pt-4 border-t border-slate-200 dark:border-slate-800">
+                <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                  Free
                 </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">No account required</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">/ Unlimited Use</span>
               </div>
 
-              {/* Description */}
-              <div className="space-y-2 text-left">
-                <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Description</span>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
-                  {template.description || 'Elevate your productions with professional curated digital files from DP_TEMPLATES. Fully customizable templates, clean layer structuring, premium elements, and immediate free download.'}
-                </p>
-              </div>
-
-              {/* Checkout Action Button */}
-              <div className="space-y-3 pt-4">
+              {/* Action */}
+              <div className="space-y-3 pt-2">
                 <button
                   onClick={handleDownload}
                   disabled={downloadLoading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl py-4 text-sm font-bold flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="w-full bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-md py-4 text-sm font-semibold flex items-center justify-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {downloadLoading ? (
                     <>
                       <Loader className="w-5 h-5 animate-spin" />
-                      <span>Preparing Link...</span>
+                      <span>Generating link...</span>
                     </>
                   ) : (
                     <>
                       <Download className="w-4 h-4" />
-                      <span>{template.templateUrl ? "Open in App (CapCut/Alight)" : "Download Free File"}</span>
+                      <span>{template.templateUrl ? "Open in Editor" : "Download File"}</span>
                     </>
                   )}
                 </button>
-                <p className="text-[10px] text-slate-500 text-center flex items-center justify-center space-x-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Secure direct download from encrypted storage.</span>
+                <div className="flex justify-center text-xs text-slate-500 dark:text-slate-400 pt-2">
+                  <span className="flex items-center space-x-1">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Secure download</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2 pt-6 border-t border-slate-200 dark:border-slate-800">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">Overview</h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
+                  {template.description || 'Professional design asset curated for digital visual artists. Clean layer structure and high resolution source files.'}
                 </p>
               </div>
+
             </div>
           </div>
 
