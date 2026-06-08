@@ -25,7 +25,7 @@ const Browse = () => {
   useEffect(() => {
     fetchTemplates();
 
-    const socketUrl = import.meta.env.VITE_API_URL || '/';
+    const socketUrl = (import.meta.env.VITE_API_URL || '/').replace(/\/api$/, '') || '/';
     const socket = io(socketUrl, { path: '/socket.io' });
 
     socket.on('template_added', (newTemplate) => {

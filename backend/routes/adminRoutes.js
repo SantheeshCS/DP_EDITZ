@@ -20,6 +20,20 @@ const upload = multer({
   },
 });
 
+// Helper to sanitize filenames to prevent invalid character errors in Supabase storage keys
+const sanitizeFilename = (filename) => {
+  if (!filename) return '';
+  const lastDot = filename.lastIndexOf('.');
+  if (lastDot === -1) {
+    return filename.toLowerCase().replace(/[^a-z0-9-_]/g, '-').replace(/-+/g, '-');
+  }
+  const base = filename.substring(0, lastDot);
+  const ext = filename.substring(lastDot + 1);
+  const cleanBase = base.toLowerCase().replace(/[^a-z0-9-_]/g, '-').replace(/-+/g, '-');
+  const cleanExt = ext.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return `${cleanBase}.${cleanExt}`;
+};
+
 // Admin login route
 router.post('/login', async (req, res) => {
   try {
@@ -90,7 +104,8 @@ router.post(
       const timestamp = Date.now();
       const cleanTitle = title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30);
       
-      const previewFileName = `previews-${timestamp}-${cleanTitle}-${previewMediaFile.originalname}`;
+      const sanitizedOriginalPreviewName = sanitizeFilename(previewMediaFile.originalname);
+      const previewFileName = `previews-${timestamp}-${cleanTitle}-${sanitizedOriginalPreviewName}`;
       
       uploadedPreviewPath = await uploadToSupabase(
         'previews',
@@ -104,7 +119,8 @@ router.post(
       // 2. Upload actual template file to private 'templates' bucket (if provided)
       if (req.files['templateFile']) {
         const templateFile = req.files['templateFile'][0];
-        const templateFileName = `templates-${timestamp}-${cleanTitle}-${templateFile.originalname}`;
+        const sanitizedOriginalTemplateName = sanitizeFilename(templateFile.originalname);
+        const templateFileName = `templates-${timestamp}-${cleanTitle}-${sanitizedOriginalTemplateName}`;
         uploadedTemplatePath = await uploadToSupabase(
           'templates',
           templateFile.buffer,
