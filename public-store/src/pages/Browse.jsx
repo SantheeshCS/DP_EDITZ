@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import api from '../utils/api';
 import { Search, Download, PlayCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { io } from 'socket.io-client';
 
 const Browse = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,6 +24,27 @@ const Browse = () => {
 
   useEffect(() => {
     fetchTemplates();
+
+    const socketUrl = import.meta.env.VITE_API_URL || '/';
+    const socket = io(socketUrl, { path: '/socket.io' });
+
+    socket.on('template_added', (newTemplate) => {
+      setTemplates((prev) => [newTemplate, ...prev]);
+    });
+
+    socket.on('template_updated', (updatedTemplate) => {
+      setTemplates((prev) =>
+        prev.map((t) => (t._id === updatedTemplate._id ? updatedTemplate : t))
+      );
+    });
+
+    socket.on('template_deleted', ({ id }) => {
+      setTemplates((prev) => prev.filter((t) => t._id !== id));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -84,15 +106,17 @@ const Browse = () => {
             Browse our verified inventory of digital mockups, design elements, and video assets.
           </p>
 
-          <div className="relative max-w-xl pt-4">
-            <Search className="absolute left-4 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search assets by name or tag..."
-              value={search}
-              onChange={handleSearchChange}
-              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-slate-900 dark:focus:border-slate-100 rounded-lg py-3 pl-12 pr-4 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-colors"
-            />
+          <div className="max-w-xl pt-4">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search assets by name or tag..."
+                value={search}
+                onChange={handleSearchChange}
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-slate-900 dark:focus:border-slate-100 rounded-lg py-3 pl-12 pr-4 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-colors"
+              />
+            </div>
           </div>
         </div>
       </section>

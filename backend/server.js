@@ -9,6 +9,10 @@ const templateRoutes = require('./routes/templateRoutes');
 const downloadRoutes = require('./routes/downloadRoutes');
 
 const app = express();
+const http = require('http');
+const { Server } = require('socket.io');
+
+const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
 // ==========================================
@@ -42,6 +46,18 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+const io = new Server(server, {
+  cors: corsOptions,
+});
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log('Client connected to WebSockets:', socket.id);
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
 
 // ==========================================
 // Route registration
@@ -104,7 +120,7 @@ mongoose
   .connect(MONGODB_URI)
   .then(() => {
     console.log('MongoDB Atlas database connection successful.');
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
     });
   })

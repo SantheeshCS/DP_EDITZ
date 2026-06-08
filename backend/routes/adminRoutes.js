@@ -91,6 +91,16 @@ router.post(
       const cleanTitle = title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30);
       
       const previewFileName = `previews-${timestamp}-${cleanTitle}-${previewMediaFile.originalname}`;
+      
+      uploadedPreviewPath = await uploadToSupabase(
+        'previews',
+        previewMediaFile.buffer,
+        previewFileName,
+        previewMediaFile.mimetype
+      );
+      
+      const previewImageUrl = getPublicPreviewUrl(uploadedPreviewPath);
+
       // 2. Upload actual template file to private 'templates' bucket (if provided)
       if (req.files['templateFile']) {
         const templateFile = req.files['templateFile'][0];
@@ -126,6 +136,12 @@ router.post(
       });
 
       const savedTemplate = await newTemplate.save();
+      
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('template_added', savedTemplate);
+      }
+      
       res.status(201).json(savedTemplate);
     } catch (error) {
       console.error('Template Upload Error:', error.message);
@@ -167,6 +183,12 @@ router.put('/templates/:id', authMiddleware, async (req, res) => {
     }
 
     const updatedTemplate = await template.save();
+    
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('template_updated', updatedTemplate);
+    }
+    
     res.json(updatedTemplate);
   } catch (error) {
     console.error('Template Edit Error:', error.message);
@@ -196,6 +218,11 @@ router.delete('/templates/:id', authMiddleware, async (req, res) => {
 
     // 3. Delete from MongoDB
     await Template.findByIdAndDelete(id);
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('template_deleted', { id });
+    }
 
     res.json({ message: 'Template and files deleted successfully.' });
   } catch (error) {

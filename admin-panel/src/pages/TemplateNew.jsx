@@ -14,7 +14,6 @@ const TemplateNew = () => {
   const [templateFile, setTemplateFile] = useState(null);
   const [previewName, setPreviewName] = useState('');
   const [fileName, setFileName] = useState('');
-  const [templateUrl, setTemplateUrl] = useState('');
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isVideo, setIsVideo] = useState(false);
 
@@ -53,8 +52,8 @@ const TemplateNew = () => {
     if (!previewMedia) {
       return toast.error('Please upload a Preview Media (Video or Image).');
     }
-    if (!templateFile && !templateUrl) {
-      return toast.error('Please upload a Template File OR provide a Template App Link.');
+    if (!templateFile) {
+      return toast.error('Please upload a Template File.');
     }
 
     const formData = new FormData();
@@ -62,7 +61,6 @@ const TemplateNew = () => {
     formData.append('description', description);
     formData.append('category', category);
     formData.append('tags', tags);
-    if (templateUrl) formData.append('templateUrl', templateUrl);
     formData.append('previewMedia', previewMedia);
     if (templateFile) formData.append('templateFile', templateFile);
 
@@ -205,27 +203,10 @@ const TemplateNew = () => {
               </div>
             </div>
 
-            {/* Template Link Drop */}
+            {/* Template File Drop */}
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                Mobile App Link (CapCut, Alight Motion, etc.)
-              </label>
-              <input
-                type="url"
-                value={templateUrl}
-                onChange={(e) => setTemplateUrl(e.target.value)}
-                placeholder="https://www.capcut.com/t/..."
-                className="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors mb-4"
-              />
-              
-              <div className="flex items-center justify-center space-x-2 text-slate-400 mb-4">
-                <span className="h-px bg-slate-200 flex-1"></span>
-                <span className="text-[10px] font-bold uppercase tracking-widest">OR</span>
-                <span className="h-px bg-slate-200 flex-1"></span>
-              </div>
-
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                Downloadable Template File (ZIP, PSD, etc.)
+                Downloadable Template File * (ZIP, PSD, etc.)
               </label>
               <div className="relative border border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors py-4 px-4 flex items-center justify-between">
                 <div className="flex items-center space-x-3">

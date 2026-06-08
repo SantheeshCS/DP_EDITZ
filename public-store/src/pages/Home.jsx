@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { Search, Download, ArrowRight, PlayCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { io } from 'socket.io-client';
 
 const Home = () => {
   const [templates, setTemplates] = useState([]);
@@ -24,6 +25,27 @@ const Home = () => {
     };
 
     fetchLatestTemplates();
+
+    const socketUrl = import.meta.env.VITE_API_URL || '/';
+    const socket = io(socketUrl, { path: '/socket.io' });
+
+    socket.on('template_added', (newTemplate) => {
+      setTemplates((prev) => [newTemplate, ...prev].slice(0, 6));
+    });
+
+    socket.on('template_updated', (updatedTemplate) => {
+      setTemplates((prev) =>
+        prev.map((t) => (t._id === updatedTemplate._id ? updatedTemplate : t))
+      );
+    });
+
+    socket.on('template_deleted', ({ id }) => {
+      setTemplates((prev) => prev.filter((t) => t._id !== id));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const handleSearchSubmit = (e) => {
@@ -50,8 +72,8 @@ const Home = () => {
 
         {/* Search */}
         <form onSubmit={handleSearchSubmit} className="max-w-xl">
-          <div className="relative flex items-center">
-            <Search className="absolute left-4 w-5 h-5 text-slate-400" />
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
               placeholder="Search cinematic LUTs, poster templates..."

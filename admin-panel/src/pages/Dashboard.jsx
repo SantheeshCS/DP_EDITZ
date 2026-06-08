@@ -22,7 +22,7 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const templatesRes = await api.get('/templates');
-        const templates = templatesRes.data;
+        const templates = Array.isArray(templatesRes.data) ? templatesRes.data : [];
 
         const totalDownloads = templates.reduce((sum, t) => sum + (t.downloadCount || 0), 0);
 
@@ -39,6 +39,7 @@ const Dashboard = () => {
 
       } catch (error) {
         console.error('Dashboard Fetch Error:', error);
+        // Only show toast if the error is not a cancellation or unmounted component
         toast.error('Failed to load dashboard statistics.');
       } finally {
         setLoading(false);

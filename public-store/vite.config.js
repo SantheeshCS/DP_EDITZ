@@ -9,7 +9,11 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': 'http://localhost:5000',
-      '/uploads': 'http://localhost:5000'
+      '/uploads': 'http://localhost:5000',
+      '/socket.io': {
+        target: 'http://localhost:5000',
+        ws: true
+      }
     }
   }
 })

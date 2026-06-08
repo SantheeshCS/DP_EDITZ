@@ -61,7 +61,7 @@ const TemplatesList = () => {
       {/* Search and Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="relative flex-1 w-full sm:max-w-md">
-          <Search className="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <input
             type="text"
             placeholder="Search templates by title or tags..."
