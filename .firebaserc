@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "dp-editz-a814a"
+  },
+  "targets": {
+    "dp-editz-a814a": {
+      "hosting": {
+        "store": [
+          "dp-editz-store"
+        ],
+        "admin": [
+          "dp-editz-admin"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

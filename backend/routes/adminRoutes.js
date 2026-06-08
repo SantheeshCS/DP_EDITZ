@@ -20,20 +20,6 @@ const upload = multer({
   },
 });
 
-// Helper to sanitize filenames to prevent invalid character errors in Supabase storage keys
-const sanitizeFilename = (filename) => {
-  if (!filename) return '';
-  const lastDot = filename.lastIndexOf('.');
-  if (lastDot === -1) {
-    return filename.toLowerCase().replace(/[^a-z0-9-_]/g, '-').replace(/-+/g, '-');
-  }
-  const base = filename.substring(0, lastDot);
-  const ext = filename.substring(lastDot + 1);
-  const cleanBase = base.toLowerCase().replace(/[^a-z0-9-_]/g, '-').replace(/-+/g, '-');
-  const cleanExt = ext.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return `${cleanBase}.${cleanExt}`;
-};
-
 // Admin login route
 router.post('/login', async (req, res) => {
   try {
@@ -103,9 +89,15 @@ router.post(
       // Format filenames with timestamp to prevent collisions
       const timestamp = Date.now();
       const cleanTitle = title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30);
-      
-      const sanitizedOriginalPreviewName = sanitizeFilename(previewMediaFile.originalname);
-      const previewFileName = `previews-${timestamp}-${cleanTitle}-${sanitizedOriginalPreviewName}`;
+
+      // Sanitize original filenames to only allow safe characters for Supabase storage keys
+      const sanitizeFileName = (name) => {
+        const ext = name.lastIndexOf('.') > 0 ? name.slice(name.lastIndexOf('.')) : '';
+        const base = name.slice(0, name.length - ext.length);
+        return base.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 50) + ext.toLowerCase();
+      };
+
+      const previewFileName = `previews-${timestamp}-${cleanTitle}-${sanitizeFileName(previewMediaFile.originalname)}`;
       
       uploadedPreviewPath = await uploadToSupabase(
         'previews',
@@ -119,8 +111,7 @@ router.post(
       // 2. Upload actual template file to private 'templates' bucket (if provided)
       if (req.files['templateFile']) {
         const templateFile = req.files['templateFile'][0];
-        const sanitizedOriginalTemplateName = sanitizeFilename(templateFile.originalname);
-        const templateFileName = `templates-${timestamp}-${cleanTitle}-${sanitizedOriginalTemplateName}`;
+        const templateFileName = `templates-${timestamp}-${cleanTitle}-${sanitizeFileName(templateFile.originalname)}`;
         uploadedTemplatePath = await uploadToSupabase(
           'templates',
           templateFile.buffer,
