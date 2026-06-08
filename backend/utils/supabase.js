@@ -70,10 +70,32 @@ const deleteFileFromSupabase = async (bucketName, path) => {
   return data;
 };
 
+/**
+ * Generates a signed URL for direct client-side upload to a Supabase bucket.
+ * @param {string} bucketName - 'previews' or 'templates'
+ * @param {string} path - Destination file path
+ */
+const generateSignedUploadUrl = async (bucketName, path) => {
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .createSignedUploadUrl(path);
+
+  if (error) {
+    throw new Error(`Supabase Signed Upload URL Error: ${error.message}`);
+  }
+
+  return {
+    signedUrl: data.signedUrl,
+    token: data.token,
+    path: data.path,
+  };
+};
+
 module.exports = {
   supabase,
   uploadToSupabase,
   getPublicPreviewUrl,
   generateSignedUrl,
+  generateSignedUploadUrl,
   deleteFileFromSupabase,
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../utils/api';
+import axios from 'axios';
 import { ArrowLeft, Upload, Loader, FileVideo, FileArchive } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -56,28 +57,56 @@ const TemplateNew = () => {
       return toast.error('Please upload a Template File.');
     }
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('category', category);
-    formData.append('tags', tags);
-    formData.append('previewMedia', previewMedia);
-    if (templateFile) formData.append('templateFile', templateFile);
-
     setLoading(true);
-    const toastId = toast.loading('Uploading files to storage and saving metadata...');
+    const toastId = toast.loading('Initializing upload session...');
 
     try {
-      await api.post('/admin/templates', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      // 1. Get Signed URLs from Backend
+      const initRes = await api.post('/admin/templates/init-upload', {
+        title,
+        previewFileName: previewMedia.name,
+        templateFileName: templateFile.name,
       });
+
+      const { preview, template } = initRes.data;
+
+      // 2. Direct Uploads to Supabase via Axios (to track progress)
+      
+      toast.loading('Uploading preview media (0%)...', { id: toastId });
+      await axios.put(preview.signedUrl, previewMedia, {
+        headers: { 'Content-Type': previewMedia.type },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          toast.loading(`Uploading preview media (${percentCompleted}%)...`, { id: toastId });
+        }
+      });
+
+      toast.loading('Uploading template file (0%)...', { id: toastId });
+      await axios.put(template.signedUrl, templateFile, {
+        headers: { 'Content-Type': templateFile.type },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          toast.loading(`Uploading template file (${percentCompleted}%)...`, { id: toastId });
+        }
+      });
+
+      // 3. Finalize metadata save
+      toast.loading('Saving template metadata...', { id: toastId });
+      await api.post('/admin/templates/finalize', {
+        title,
+        description,
+        category,
+        tags,
+        previewStoragePath: preview.path,
+        templateStoragePath: template.path,
+        previewMediaType: previewMedia.type.startsWith('video/') ? 'video' : 'image',
+      });
+
       toast.success('Template published successfully!', { id: toastId });
       navigate('/templates');
     } catch (error) {
       console.error(error);
-      const msg = error.response?.data?.error || 'Failed to publish template files.';
+      const msg = error.response?.data?.error || error.message || 'Failed to publish template.';
       toast.error(msg, { id: toastId });
     } finally {
       setLoading(false);

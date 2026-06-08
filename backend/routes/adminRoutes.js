@@ -9,6 +9,7 @@ const {
   uploadToSupabase,
   getPublicPreviewUrl,
   deleteFileFromSupabase,
+  generateSignedUploadUrl,
 } = require('../utils/supabase');
 
 // Multer memory storage config for handling file buffers
@@ -165,6 +166,111 @@ router.post(
     }
   }
 );
+
+// Helper for cleaning filenames
+const sanitizeFileName = (name) => {
+  const ext = name.lastIndexOf('.') > 0 ? name.slice(name.lastIndexOf('.')) : '';
+  const base = name.slice(0, name.length - ext.length);
+  return base.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 50) + ext.toLowerCase();
+};
+
+// Init upload: Generates signed upload URLs for client-side direct upload to Supabase
+router.post('/templates/init-upload', authMiddleware, async (req, res) => {
+  try {
+    const { title, previewFileName, templateFileName } = req.body;
+
+    if (!title || !previewFileName) {
+      return res.status(400).json({ error: 'Title and preview filename are required.' });
+    }
+
+    const timestamp = Date.now();
+    const cleanTitle = title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30);
+
+    // Generate paths
+    const previewStoragePath = `previews-${timestamp}-${cleanTitle}-${sanitizeFileName(previewFileName)}`;
+    const previewUrlData = await generateSignedUploadUrl('previews', previewStoragePath);
+
+    let templateStoragePath = null;
+    let templateUrlData = null;
+
+    if (templateFileName) {
+      templateStoragePath = `templates-${timestamp}-${cleanTitle}-${sanitizeFileName(templateFileName)}`;
+      templateUrlData = await generateSignedUploadUrl('templates', templateStoragePath);
+    }
+
+    res.json({
+      preview: {
+        signedUrl: previewUrlData.signedUrl,
+        path: previewUrlData.path,
+      },
+      template: templateUrlData ? {
+        signedUrl: templateUrlData.signedUrl,
+        path: templateUrlData.path,
+      } : null,
+    });
+  } catch (error) {
+    console.error('Init Upload Error:', error.message);
+    res.status(500).json({ error: 'Failed to initialize upload session.' });
+  }
+});
+
+// Finalize upload: Saves template metadata to DB after client-side upload finishes
+router.post('/templates/finalize', authMiddleware, async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      category,
+      tags,
+      templateUrl,
+      previewStoragePath,
+      templateStoragePath,
+      previewMediaType,
+    } = req.body;
+
+    if (!title || !category || !previewStoragePath) {
+      return res.status(400).json({ error: 'Title, category, and preview storage path are required.' });
+    }
+
+    if (!templateStoragePath && !templateUrl) {
+      return res.status(400).json({ error: 'Either a template file path or a template app link must be provided.' });
+    }
+
+    const previewImageUrl = getPublicPreviewUrl(previewStoragePath);
+
+    let parsedTags = [];
+    if (tags) {
+      parsedTags = tags
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
+    }
+
+    const newTemplate = new Template({
+      title,
+      description,
+      category,
+      previewImagePath: previewStoragePath,
+      previewImageUrl,
+      previewMediaType,
+      fileStoragePath: templateStoragePath || null,
+      templateUrl: templateUrl || null,
+      tags: parsedTags,
+    });
+
+    const savedTemplate = await newTemplate.save();
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('template_added', savedTemplate);
+    }
+
+    res.status(201).json(savedTemplate);
+  } catch (error) {
+    console.error('Finalize Upload Error:', error.message);
+    res.status(500).json({ error: 'Server error while saving template metadata.' });
+  }
+});
 
 // Edit template metadata (JWT Protected)
 router.put('/templates/:id', authMiddleware, async (req, res) => {
