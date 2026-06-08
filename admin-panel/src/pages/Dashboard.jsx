@@ -89,7 +89,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
         
         {/* Popular Templates list */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5 text-indigo-500" />

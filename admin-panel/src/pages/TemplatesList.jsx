@@ -60,7 +60,7 @@ const TemplatesList = () => {
     <div className="space-y-6">
       {/* Search and Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 w-full sm:max-w-md">
           <Search className="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400" />
           <input
             type="text"
@@ -73,7 +73,7 @@ const TemplatesList = () => {
 
         <Link
           to="/templates/new"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 px-5 text-sm font-semibold flex items-center justify-center space-x-2 transition-colors shadow-md self-start sm:self-auto cursor-pointer"
+          className="bg-indigo-600 w-full sm:w-auto hover:bg-indigo-700 text-white rounded-xl py-3 px-5 text-sm font-semibold flex items-center justify-center space-x-2 transition-colors shadow-md cursor-pointer"
         >
           <Plus className="w-5 h-5" />
           <span>Upload Template</span>

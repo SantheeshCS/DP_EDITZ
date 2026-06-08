@@ -59,6 +59,15 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/download', downloadRoutes);
 
+// Serve Frontend Build for Tunneling
+app.use(express.static(path.join(__dirname, '../public-store/dist')));
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+    return res.status(404).json({ error: 'Endpoint not found.' });
+  }
+  res.sendFile(path.join(__dirname, '../public-store/dist/index.html'));
+});
+
 // ==========================================
 // Base Check & Error Handling
 // ==========================================

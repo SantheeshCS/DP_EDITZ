@@ -14,7 +14,7 @@ import TemplateDetail from './pages/TemplateDetail';
 function App() {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-white text-slate-900 font-sans selection:bg-indigo-600 selection:text-white">
+      <div className="flex flex-col min-h-screen bg-white dark:bg-[#030712] text-slate-900 dark:text-slate-100 font-sans selection:bg-indigo-600 dark:selection:bg-indigo-500 selection:text-white transition-colors">
         
         {/* Toast Notification Provider */}
         <Toaster

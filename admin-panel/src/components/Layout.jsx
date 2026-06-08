@@ -9,7 +9,8 @@ import {
   Key,
   Lock,
   X,
-  Loader
+  Loader,
+  Menu
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
@@ -23,6 +24,7 @@ const Layout = ({ children }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [updating, setUpdating] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -76,8 +78,16 @@ const Layout = ({ children }) => {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 font-sans">
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 z-20 lg:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between">
+      <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-slate-200 flex flex-col justify-between transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div>
           {/* Brand Logo */}
           <Link to="/dashboard" className="h-16 flex items-center px-6 border-b border-slate-200 hover:bg-slate-50 transition-colors">
@@ -95,6 +105,7 @@ const Layout = ({ children }) => {
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                     isActive
                       ? 'bg-indigo-50 text-indigo-600 border border-indigo-100'
@@ -135,12 +146,20 @@ const Layout = ({ children }) => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8">
-          <h1 className="text-lg font-semibold text-slate-800">
-            {menuItems.find((item) => item.path === location.pathname)?.name || 'Dashboard'}
-          </h1>
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg lg:hidden transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-lg font-semibold text-slate-800 truncate">
+              {menuItems.find((item) => item.path === location.pathname)?.name || 'Dashboard'}
+            </h1>
+          </div>
           <div className="flex items-center space-x-4">
             <span className="text-xs bg-slate-100 px-3 py-1 rounded-full border border-slate-200 text-slate-500">
               Environment: Production
@@ -149,7 +168,7 @@ const Layout = ({ children }) => {
         </header>
 
         {/* Dynamic Inner View */}
-        <main className="flex-1 overflow-y-auto bg-slate-50 p-8">
+        <main className="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-8">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

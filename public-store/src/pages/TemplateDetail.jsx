@@ -57,8 +57,8 @@ const TemplateDetail = () => {
   if (!template) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-20 text-center space-y-6">
-        <h2 className="text-2xl font-bold text-slate-800">Template Not Found</h2>
-        <p className="text-slate-500 text-sm">The template file you are looking for does not exist or has been deleted by administration.</p>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Template Not Found</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-sm">The template file you are looking for does not exist or has been deleted by administration.</p>
         <Link to="/browse" className="inline-block bg-indigo-600 text-white rounded-xl px-5 py-3 text-xs font-bold shadow-md hover:bg-indigo-700 transition-colors">
           Browse Directory
         </Link>
@@ -67,9 +67,9 @@ const TemplateDetail = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-slate-50 px-6 py-12">
+    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 px-6 py-12 transition-colors">
       {/* Decorative Glow */}
-      <div className="absolute top-[20%] left-[-10%] w-[50%] h-[50%] bg-indigo-50 rounded-full pointer-events-none z-0 blur-3xl"></div>
+      <div className="absolute top-[20%] left-[-10%] w-[50%] h-[50%] bg-indigo-50 dark:bg-indigo-900/10 rounded-full pointer-events-none z-0 blur-3xl"></div>
 
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         
@@ -77,7 +77,7 @@ const TemplateDetail = () => {
         <div>
           <Link
             to="/browse"
-            className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+            className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Browse Directory</span>
@@ -89,7 +89,7 @@ const TemplateDetail = () => {
           
           {/* Left Column: Visual public image/video preview (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="bg-slate-100 rounded-3xl overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center">
+            <div className="bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center">
               {template.previewMediaType === 'video' ? (
                 <video
                   src={template.previewImageUrl}
@@ -109,9 +109,9 @@ const TemplateDetail = () => {
             </div>
             
             {/* Template specs card */}
-            <div className="bg-white border border-slate-200 shadow-sm p-6 rounded-2xl space-y-4">
-              <h3 className="text-sm font-bold text-slate-800">What's included in this download?</h3>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-500">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm p-6 rounded-2xl space-y-4">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">What's included in this download?</h3>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-500 dark:text-slate-400">
                 <li className="flex items-center space-x-2">
                   <Download className="w-4 h-4 text-indigo-500 shrink-0" />
                   <span>Immediate High-Speed Download</span>
@@ -134,13 +134,13 @@ const TemplateDetail = () => {
 
           {/* Right Column: details (5 cols) */}
           <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
-            <div className="bg-white border border-slate-200 p-8 rounded-3xl space-y-6 shadow-sm flex-1">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl space-y-6 shadow-sm flex-1">
               {/* Category Badge & title */}
               <div className="space-y-2">
-                <span className="bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full">
+                <span className="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full">
                   {template.category}
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
                   {template.title}
                 </h1>
               </div>
@@ -150,7 +150,7 @@ const TemplateDetail = () => {
                 {template.tags?.map((tag, i) => (
                   <span
                     key={i}
-                    className="text-[10px] bg-slate-50 text-slate-500 border border-slate-200 px-3 py-0.5 rounded-full capitalize font-semibold"
+                    className="text-[10px] bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-3 py-0.5 rounded-full capitalize font-semibold"
                   >
                     {tag}
                   </span>
@@ -158,18 +158,18 @@ const TemplateDetail = () => {
               </div>
 
               {/* Price Tag */}
-              <div className="flex items-baseline space-x-2 border-t border-b border-slate-100 py-4">
+              <div className="flex items-baseline space-x-2 border-t border-b border-slate-100 dark:border-slate-800 py-4">
                 <span className="text-[10px] text-slate-400 uppercase tracking-widest self-center">Access:</span>
-                <span className="text-3xl font-black text-emerald-600">
+                <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
                   FREE
                 </span>
-                <span className="text-xs text-slate-500 font-medium">No account required</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">No account required</span>
               </div>
 
               {/* Description */}
               <div className="space-y-2 text-left">
                 <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Description</span>
-                <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
                   {template.description || 'Elevate your productions with professional curated digital files from DP_TEMPLATES. Fully customizable templates, clean layer structuring, premium elements, and immediate free download.'}
                 </p>
               </div>

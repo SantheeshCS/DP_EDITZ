@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 const TemplateNew = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('editing');
+  const [category, setCategory] = useState('alight-motion');
   const [tags, setTags] = useState('');
   
   const [previewMedia, setPreviewMedia] = useState(null);
@@ -103,7 +103,7 @@ const TemplateNew = () => {
       </div>
 
       {/* Main Upload Form */}
-      <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm max-w-4xl space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-8 shadow-sm max-w-4xl space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column: Metadata */}
           <div className="space-y-4">
@@ -130,10 +130,11 @@ const TemplateNew = () => {
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
               >
-                <option value="editing">Editing Template</option>
-                <option value="poster">Poster Design</option>
-                <option value="social-media">Social Media Asset</option>
-                <option value="other">Other Creative File</option>
+                <option value="alight-motion">Alight Motion</option>
+                <option value="kinemaster">Kinemaster</option>
+                <option value="capcut">CapCut</option>
+                <option value="lightroom">Lightroom</option>
+                <option value="other">Other App / Asset</option>
               </select>
             </div>
 

@@ -13,7 +13,7 @@ const templateSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['editing', 'poster', 'social-media', 'other'],
+    enum: ['alight-motion', 'kinemaster', 'capcut', 'lightroom', 'other'],
   },
 
   previewImagePath: {

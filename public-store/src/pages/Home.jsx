@@ -32,33 +32,33 @@ const Home = () => {
     if (searchQuery.trim()) {
       navigate(`/browse?search=${encodeURIComponent(searchQuery.trim())}`);
     } else {
-      navigate('/browse');
+      toast.error('Please enter a search term first.');
     }
   };
 
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden space-y-24">
+    <div className="relative min-h-screen bg-white dark:bg-[#030712] overflow-hidden space-y-24 transition-colors">
       {/* Decorative Glow Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-50 rounded-full pointer-events-none z-0 blur-3xl"></div>
-      <div className="absolute top-[30%] right-[-10%] w-[50%] h-[50%] bg-purple-50 rounded-full pointer-events-none z-0 blur-3xl"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-50 dark:bg-indigo-900/10 rounded-full pointer-events-none z-0 blur-3xl"></div>
+      <div className="absolute top-[30%] right-[-10%] w-[50%] h-[50%] bg-purple-50 dark:bg-purple-900/10 rounded-full pointer-events-none z-0 blur-3xl"></div>
 
       {/* Hero Section */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pt-16 text-center space-y-8">
         {/* Glow Tagline */}
-        <div className="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-100 text-indigo-600 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest animate-pulse">
+        <div className="inline-flex items-center space-x-2 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest animate-pulse">
           <Sparkles className="w-4 h-4" />
           <span>Elite Visual Templates Directory</span>
         </div>
 
         {/* Catchy Header */}
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 max-w-4xl mx-auto leading-tight sm:leading-none">
+        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-tight sm:leading-none">
           Elevate Your Productions with{' '}
-          <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 dark:from-indigo-400 dark:via-purple-400 dark:to-blue-500 bg-clip-text text-transparent">
             Free Templates
           </span>
         </h1>
 
-        <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
           Stunning video assets, cinematic color LUTs, and digital poster assets. Download instantly for your next creative project. No accounts, no subscriptions.
         </p>
 
@@ -71,7 +71,7 @@ const Home = () => {
               placeholder="Search cinematic LUTs, poster templates, motion files..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-slate-200 focus:border-indigo-500 rounded-2xl py-4 pl-12 pr-32 text-sm text-slate-800 placeholder-slate-400 focus:outline-none transition-colors shadow-sm"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-indigo-500 dark:focus:border-indigo-500 rounded-2xl py-4 pl-12 pr-32 text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition-colors shadow-sm"
             />
             <button
               type="submit"
@@ -84,25 +84,25 @@ const Home = () => {
 
         {/* Feature Highlights */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto pt-8 text-left">
-          <div className="bg-white border border-slate-100 shadow-sm p-5 rounded-2xl flex items-start space-x-3.5">
+          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm p-5 rounded-2xl flex items-start space-x-3.5">
             <Zap className="w-5 h-5 text-indigo-500 mt-0.5 shrink-0" />
             <div>
-              <h4 className="text-sm font-bold text-slate-800">100% Free Access</h4>
-              <p className="text-xs text-slate-500 mt-1">Download any template from the directory at zero cost.</p>
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">100% Free Access</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Download any template from the directory at zero cost.</p>
             </div>
           </div>
-          <div className="bg-white border border-slate-100 shadow-sm p-5 rounded-2xl flex items-start space-x-3.5">
+          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm p-5 rounded-2xl flex items-start space-x-3.5">
             <Zap className="w-5 h-5 text-purple-500 mt-0.5 shrink-0" />
             <div>
-              <h4 className="text-sm font-bold text-slate-800">No Signup Required</h4>
-              <p className="text-xs text-slate-500 mt-1">Get immediate access to files without passwords or email signup forms.</p>
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">No Signup Required</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Get immediate access to files without passwords or email signup forms.</p>
             </div>
           </div>
-          <div className="bg-white border border-slate-100 shadow-sm p-5 rounded-2xl flex items-start space-x-3.5">
+          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm p-5 rounded-2xl flex items-start space-x-3.5">
             <Zap className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
             <div>
-              <h4 className="text-sm font-bold text-slate-800">Direct Secure Links</h4>
-              <p className="text-xs text-slate-500 mt-1">Fast downloads served straight from our secure cloud storage.</p>
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Direct Secure Links</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Fast downloads served straight from our secure cloud storage.</p>
             </div>
           </div>
         </div>
@@ -112,8 +112,8 @@ const Home = () => {
       <section className="relative z-10 max-w-7xl mx-auto px-6 space-y-8 pb-20">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">Featured Releases</h2>
-            <p className="text-xs text-slate-500">Hand-curated digital creative layouts live on directory</p>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Featured Releases</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Hand-curated digital creative layouts live on directory</p>
           </div>
           <Link
             to="/browse"
@@ -129,32 +129,32 @@ const Home = () => {
           {loading ? (
             // Shimmer Cards
             Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white border border-slate-100 rounded-3xl overflow-hidden p-4 space-y-4 shadow-sm">
-                <div className="bg-slate-100 animate-pulse h-48 rounded-2xl"></div>
+              <div key={i} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden p-4 space-y-4 shadow-sm">
+                <div className="bg-slate-100 dark:bg-slate-800 animate-pulse h-48 rounded-2xl"></div>
                 <div className="space-y-2">
-                  <div className="bg-slate-100 animate-pulse h-4 w-[60%] rounded"></div>
-                  <div className="bg-slate-100 animate-pulse h-3 w-[40%] rounded"></div>
+                  <div className="bg-slate-100 dark:bg-slate-800 animate-pulse h-4 w-[60%] rounded"></div>
+                  <div className="bg-slate-100 dark:bg-slate-800 animate-pulse h-3 w-[40%] rounded"></div>
                   <div className="flex justify-between items-center pt-2">
-                    <div className="bg-slate-100 animate-pulse h-8 w-20 rounded-lg"></div>
+                    <div className="bg-slate-100 dark:bg-slate-800 animate-pulse h-8 w-20 rounded-lg"></div>
                   </div>
                 </div>
               </div>
             ))
           ) : templates.length === 0 ? (
-            <div className="col-span-full text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-300">
-              <Download className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-500 text-sm">No templates published on the directory yet.</p>
-              <p className="text-slate-400 text-xs mt-1">Check back later or check admin settings.</p>
+            <div className="col-span-full text-center py-20 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+              <Download className="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto mb-4" />
+              <p className="text-slate-500 dark:text-slate-400 text-sm">No templates published on the directory yet.</p>
+              <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">Check back later or check admin settings.</p>
             </div>
           ) : (
             templates.map((template) => (
               <div
                 key={template._id}
-                className="bg-white border border-slate-200 hover:border-slate-300 rounded-3xl overflow-hidden p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-3xl overflow-hidden p-4 flex flex-col justify-between shadow-sm hover:shadow-md dark:hover:shadow-indigo-500/5 transition-all"
               >
                 <div>
                   {/* Thumbnail / Video */}
-                  <div className="relative group rounded-2xl overflow-hidden bg-slate-100 aspect-[16/9] border border-slate-100">
+                  <div className="relative group rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 aspect-[16/9] border border-slate-100 dark:border-slate-800">
                     {template.previewMediaType === 'video' ? (
                       <>
                         <video
@@ -178,33 +178,33 @@ const Home = () => {
                         loading="lazy"
                       />
                     )}
-                    <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 pointer-events-none">
+                    <div className="absolute inset-0 bg-slate-900/10 dark:bg-slate-900/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 pointer-events-none">
                        {/* Subtle overlay */}
                     </div>
                     {/* Category overlay */}
-                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-[10px] text-indigo-600 border border-indigo-100 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                    <span className="absolute top-3 left-3 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md text-[10px] text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
                       {template.category}
                     </span>
                   </div>
 
                   {/* Title and details */}
                   <div className="mt-4 space-y-1.5">
-                    <h3 className="text-base font-bold text-slate-800 line-clamp-1">
+                    <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 line-clamp-1">
                       {template.title}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-2 min-h-[32px]">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 min-h-[32px]">
                       {template.description || 'Professional design assets curated for digital visual artists.'}
                     </p>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-100 mt-4 pt-4 flex items-center justify-between">
-                  <div className="flex flex-col text-slate-500 text-xs">
+                <div className="border-t border-slate-100 dark:border-slate-800 mt-4 pt-4 flex items-center justify-between">
+                  <div className="flex flex-col text-slate-500 dark:text-slate-400 text-xs">
                      <span>{template.downloadCount || 0} Downloads</span>
                   </div>
                   <Link
                     to={`/templates/${template._id}`}
-                    className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold px-4 py-2 rounded-xl transition-all active:scale-95"
+                    className="bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold px-4 py-2 rounded-xl transition-all active:scale-95"
                   >
                     View Details
                   </Link>
